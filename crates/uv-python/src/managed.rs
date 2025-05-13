@@ -60,6 +60,8 @@ pub enum Error {
     MissingExecutable(PathBuf),
     #[error("Missing expected target directory for link at {}", _0.user_display())]
     MissingLinkTargetDirectory(PathBuf),
+    #[error("Unable to derive symlink directory from executable path {}", _0.user_display())]
+    ExecutablePath(PathBuf),
     #[error("Failed to create canonical Python executable at {} from {}", to.user_display(), from.user_display())]
     CanonicalizeExecutable {
         from: PathBuf,
@@ -524,9 +526,7 @@ impl ManagedPythonInstallation {
     /// Ensure the environment contains the symlink directory (or junction on Windows)
     /// pointing to the patch directory for this minor version.
     pub fn ensure_minor_version_link(&self) -> Result<(), Error> {
-        if let Some(directory_symlink) =
-            DirectorySymlink::from_executable(self.executable(false).as_path(), &self.key)
-        {
+        if let Some(directory_symlink) = DirectorySymlink::from_installation(self) {
             directory_symlink.create_directory()?;
         }
         Ok(())
@@ -596,13 +596,6 @@ impl ManagedPythonInstallation {
         Ok(())
     }
 
-    /// Create a link to the managed Python executable.
-    ///
-    /// If the file already exists at the target path, an error will be returned.
-    pub fn create_bin_link(&self, target: &Path) -> Result<(), Error> {
-        create_bin_link(target, self.executable(false))
-    }
-
     /// Returns `true` if the path is a link to this installation's binary, e.g., as created by
     /// [`ManagedPythonInstallation::create_bin_link`].
     pub fn is_bin_link(&self, path: &Path) -> bool {
@@ -615,7 +608,8 @@ impl ManagedPythonInstallation {
             if !matches!(launcher.kind, uv_trampoline_builder::LauncherKind::Python) {
                 return false;
             }
-            launcher.python_path == self.executable(false)
+            dunce::canonicalize(&launcher.python_path).unwrap_or(launcher.python_path)
+                == self.executable(false)
         } else {
             unreachable!("Only Windows and Unix are supported")
         }

@@ -754,13 +754,20 @@ pub struct BrokenSymlink {
     pub path: PathBuf,
     /// Whether the interpreter path looks like a virtual environment.
     pub venv: bool,
+    /// Whether the link is a Windows trampoline target
+    pub trampoline_target: bool,
 }
 
 impl Display for BrokenSymlink {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let symlink_term = if self.trampoline_target {
+            "Missing trampoline target"
+        } else {
+            "Broken symlink"
+        };
         write!(
             f,
-            "Broken symlink at `{}`, was the underlying Python interpreter removed?",
+            "{symlink_term} at `{}`, was the underlying Python interpreter removed?",
             self.path.user_display()
         )?;
         if self.venv {
@@ -960,11 +967,20 @@ impl InterpreterInfo {
             .and_then(Timestamp::from_path)
             .map_err(|err| {
                 if err.kind() == io::ErrorKind::NotFound {
+                    #[cfg(unix)]
+                    let trampoline_target = false;
+
+                    #[cfg(windows)]
+                    let trampoline_target =
+                        uv_trampoline_builder::Launcher::try_from_path(&absolute)
+                            .is_ok_and(|target| target.is_some());
+
                     // Check if it looks like a venv interpreter where the underlying Python
                     // installation was removed.
-                    if absolute
-                        .symlink_metadata()
-                        .is_ok_and(|metadata| metadata.is_symlink())
+                    if trampoline_target
+                        || absolute
+                            .symlink_metadata()
+                            .is_ok_and(|metadata| metadata.is_symlink())
                     {
                         let venv = executable
                             .parent()
@@ -974,6 +990,7 @@ impl InterpreterInfo {
                         Error::BrokenSymlink(BrokenSymlink {
                             path: executable.to_path_buf(),
                             venv,
+                            trampoline_target,
                         })
                     } else {
                         Error::NotFound(executable.to_path_buf())
