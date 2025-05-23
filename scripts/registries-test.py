@@ -12,6 +12,9 @@ To configure a registry, set the following environment variables:
 The username defaults to "__token__" but can be optionally set with:
     UV_TEST_<registry_name>_USERNAME
 
+Keep in mind that some registries can fall back to PyPI internally, so make sure
+you choose a package that only exists in the registry you are testing.
+
 # /// script
 # dependencies = ["colorama"]
 # ///
