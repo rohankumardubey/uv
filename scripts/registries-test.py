@@ -36,6 +36,7 @@ colorama_init(autoreset=True)
 
 DEFAULT_TIMEOUT = 30
 
+
 def get_registries() -> Dict[str, str]:
     pattern = re.compile(r"^UV_TEST_(.+)_URL$")
     registries: Dict[str, str] = {}
@@ -66,7 +67,15 @@ default = true
     pyproject_file.write_text(pyproject_content, encoding="utf-8")
 
 
-def run_test(registry_name: str, registry_url: str, package: str, username: str, token: str, verbosity: int, timeout: int = DEFAULT_TIMEOUT) -> bool:
+def run_test(
+    registry_name: str,
+    registry_url: str,
+    package: str,
+    username: str,
+    token: str,
+    verbosity: int,
+    timeout: int = DEFAULT_TIMEOUT,
+) -> bool:
     """Attempt to install package from this registry."""
     print(
         f"{registry_name} -- Running test for {registry_url} with username {username}"
@@ -76,7 +85,17 @@ def run_test(registry_name: str, registry_url: str, package: str, username: str,
     os.environ[f"UV_INDEX_{registry_name.upper()}_PASSWORD"] = token
 
     with tempfile.TemporaryDirectory() as project_dir:
-        cmd = ["cargo", "run", "--", "add", package, "--index", registry_name, "--directory", project_dir]
+        cmd = [
+            "cargo",
+            "run",
+            "--",
+            "add",
+            package,
+            "--index",
+            registry_name,
+            "--directory",
+            project_dir,
+        ]
         if verbosity >= 2:
             cmd.extend(["-vv"])
         elif verbosity == 1:
@@ -91,9 +110,7 @@ def run_test(registry_name: str, registry_url: str, package: str, username: str,
 
             if result.returncode != 0:
                 error_msg = result.stderr.strip() if result.stderr else "Unknown error"
-                print(
-                    f"{Fore.RED}{registry_name}: FAIL - {Fore.RESET} {error_msg}"
-                )
+                print(f"{Fore.RED}{registry_name}: FAIL - {Fore.RESET} {error_msg}")
                 return False
 
             success = False
@@ -150,15 +167,11 @@ def parse_args() -> argparse.Namespace:
 
 def build_uv():
     cmd = ["cargo", "build"]
-    result = subprocess.run(
-        cmd, capture_output=True, text=True, check=False
-    )
+    result = subprocess.run(cmd, capture_output=True, text=True, check=False)
 
     if result.returncode != 0:
         error_msg = result.stderr.strip() if result.stderr else "Unknown error"
-        print(
-            f"{Fore.RED}Cargo failed to build{Fore.RESET}: {error_msg}"
-        )
+        print(f"{Fore.RED}Cargo failed to build{Fore.RESET}: {error_msg}")
         sys.exit(1)
 
 
@@ -201,7 +214,9 @@ def main() -> None:
 
         username = os.getenv(f"UV_TEST_{registry_name.upper()}_USERNAME") or "__token__"
 
-        if run_test(registry_name, registry_url, package, username, token, args.verbose, timeout):
+        if run_test(
+            registry_name, registry_url, package, username, token, args.verbose, timeout
+        ):
             passed += 1
         else:
             failed += 1
@@ -214,8 +229,10 @@ def main() -> None:
         print("\nNo tests were run - have you defined at least one registry?")
         print("     * UV_TEST_<registry_name>_URL")
         print("     * UV_TEST_<registry_name>_TOKEN")
-        print("     * UV_TEST_<package_name>_PKG (the private package to test installing)")
-        print("     * UV_TEST_<registry_name>_USERNAME (defaults to \"__token__\")")
+        print(
+            "     * UV_TEST_<package_name>_PKG (the private package to test installing)"
+        )
+        print('     * UV_TEST_<registry_name>_USERNAME (defaults to "__token__")')
         sys.exit(1)
 
     sys.exit(0 if failed == 0 else 1)
