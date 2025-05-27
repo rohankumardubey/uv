@@ -7,7 +7,7 @@ To configure a registry, set the following environment variables:
 
     UV_TEST_<registry_name>_URL         URL for the registry
     UV_TEST_<registry_name>_TOKEN       authentication token
-    UV_TEST_<package_name>_PKG          private package to install
+    UV_TEST_<registry_name>_PKG          private package to install
 
 The username defaults to "__token__" but can be optionally set with:
     UV_TEST_<registry_name>_USERNAME
@@ -230,7 +230,7 @@ def main() -> None:
         print("     * UV_TEST_<registry_name>_URL")
         print("     * UV_TEST_<registry_name>_TOKEN")
         print(
-            "     * UV_TEST_<package_name>_PKG (the private package to test installing)"
+            "     * UV_TEST_<registry_name>_PKG (the private package to test installing)"
         )
         print('     * UV_TEST_<registry_name>_USERNAME (defaults to "__token__")')
         sys.exit(1)
