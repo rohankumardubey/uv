@@ -509,7 +509,7 @@ impl Ord for PythonInstallationKey {
     }
 }
 
-/// A representation of a [`PythonInstallationKey`] that excludes the patch and prerelease versions.
+/// A view into a [`PythonInstallationKey`] that excludes the patch and prerelease versions.
 #[derive(Clone, Eq, Ord, PartialOrd, RefCast)]
 #[repr(transparent)]
 pub struct PythonInstallationMinorVersionKey(PythonInstallationKey);
