@@ -496,8 +496,8 @@ fn python_install_preview() {
     ----- stdout -----
 
     ----- stderr -----
-    Installed Python 3.11.12 in [TIME]
-     + cpython-3.11.12-[PLATFORM] (python3.11)
+    Installed Python 3.11.13 in [TIME]
+     + cpython-3.11.13-[PLATFORM] (python3.11)
     ");
 
     let bin_python = context
@@ -537,8 +537,8 @@ fn python_install_preview() {
 
     ----- stderr -----
     Searching for Python versions matching: Python 3.11
-    Uninstalled Python 3.11.12 in [TIME]
-     - cpython-3.11.12-[PLATFORM] (python3.11)
+    Uninstalled Python 3.11.13 in [TIME]
+     - cpython-3.11.13-[PLATFORM] (python3.11)
     ");
 
     // Install multiple patch versions
@@ -1646,14 +1646,14 @@ fn install_transparent_patch_upgrade_uv_venv() {
     );
 
     // Install a higher patch version.
-    uv_snapshot!(context.filters(), context.python_install().arg("3.12.10"), @r"
+    uv_snapshot!(context.filters(), context.python_install().arg("3.12.11"), @r"
     success: true
     exit_code: 0
     ----- stdout -----
 
     ----- stderr -----
-    Installed Python 3.12.10 in [TIME]
-     + cpython-3.12.10-[PLATFORM]
+    Installed Python 3.12.11 in [TIME]
+     + cpython-3.12.11-[PLATFORM]
     "
     );
 
@@ -1662,7 +1662,7 @@ fn install_transparent_patch_upgrade_uv_venv() {
     success: true
     exit_code: 0
     ----- stdout -----
-    Python 3.12.10
+    Python 3.12.11
 
     ----- stderr -----
     "
@@ -1685,7 +1685,7 @@ fn install_transparent_patch_upgrade_uv_venv() {
     success: true
     exit_code: 0
     ----- stdout -----
-    Python 3.12.10
+    Python 3.12.11
 
     ----- stderr -----
     "
@@ -1704,7 +1704,7 @@ fn install_multiple_patches() {
         .with_filtered_python_install_bin();
 
     // Install 3.12 patches in ascending order list
-    uv_snapshot!(context.filters(), context.python_install().arg("3.12.9").arg("3.12.10"), @r"
+    uv_snapshot!(context.filters(), context.python_install().arg("3.12.9").arg("3.12.11"), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -1712,7 +1712,7 @@ fn install_multiple_patches() {
     ----- stderr -----
     Installed 2 versions in [TIME]
      + cpython-3.12.9-[PLATFORM]
-     + cpython-3.12.10-[PLATFORM]
+     + cpython-3.12.11-[PLATFORM]
     "
     );
 
@@ -1724,7 +1724,7 @@ fn install_multiple_patches() {
     ----- stdout -----
 
     ----- stderr -----
-    Using CPython 3.12.10
+    Using CPython 3.12.11
     Creating virtual environment at: .venv
     Activate with: source .venv/[BIN]/activate
     "
@@ -1735,7 +1735,7 @@ fn install_multiple_patches() {
     success: true
     exit_code: 0
     ----- stdout -----
-    Python 3.12.10
+    Python 3.12.11
 
     ----- stderr -----
     "
@@ -1795,7 +1795,7 @@ fn uninstall_highest_patch() {
         .with_filtered_python_install_bin();
 
     // Install patches in ascending order list
-    uv_snapshot!(context.filters(), context.python_install().arg("3.12.10").arg("3.12.9").arg("3.12.8"), @r"
+    uv_snapshot!(context.filters(), context.python_install().arg("3.12.11").arg("3.12.9").arg("3.12.8"), @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -1804,7 +1804,7 @@ fn uninstall_highest_patch() {
     Installed 3 versions in [TIME]
      + cpython-3.12.8-[PLATFORM]
      + cpython-3.12.9-[PLATFORM]
-     + cpython-3.12.10-[PLATFORM]
+     + cpython-3.12.11-[PLATFORM]
     "
     );
 
@@ -1815,7 +1815,7 @@ fn uninstall_highest_patch() {
     ----- stdout -----
 
     ----- stderr -----
-    Using CPython 3.12.10
+    Using CPython 3.12.11
     Creating virtual environment at: .venv
     Activate with: source .venv/[BIN]/activate
     "
@@ -1825,22 +1825,22 @@ fn uninstall_highest_patch() {
     success: true
     exit_code: 0
     ----- stdout -----
-    Python 3.12.10
+    Python 3.12.11
 
     ----- stderr -----
     "
     );
 
     // Uninstall the highest patch version
-    uv_snapshot!(context.filters(), context.python_uninstall().arg("3.12.10"), @r"
+    uv_snapshot!(context.filters(), context.python_uninstall().arg("3.12.11"), @r"
     success: true
     exit_code: 0
     ----- stdout -----
 
     ----- stderr -----
-    Searching for Python versions matching: Python 3.12.10
-    Uninstalled Python 3.12.10 in [TIME]
-     - cpython-3.12.10-[PLATFORM]
+    Searching for Python versions matching: Python 3.12.11
+    Uninstalled Python 3.12.11 in [TIME]
+     - cpython-3.12.11-[PLATFORM]
     "
     );
 
@@ -1903,14 +1903,14 @@ fn install_no_transparent_upgrade_with_venv_patch_specification() {
     );
 
     // Install a higher patch version.
-    uv_snapshot!(context.filters(), context.python_install().arg("3.12.10"), @r"
+    uv_snapshot!(context.filters(), context.python_install().arg("3.12.11"), @r"
     success: true
     exit_code: 0
     ----- stdout -----
 
     ----- stderr -----
-    Installed Python 3.12.10 in [TIME]
-     + cpython-3.12.10-[PLATFORM]
+    Installed Python 3.12.11 in [TIME]
+     + cpython-3.12.11-[PLATFORM]
     "
     );
 
@@ -1981,14 +1981,14 @@ fn install_transparent_patch_upgrade_venv_module() {
     );
 
     // Install a higher patch version
-    uv_snapshot!(context.filters(), context.python_install().arg("3.12.10"), @r"
+    uv_snapshot!(context.filters(), context.python_install().arg("3.12.11"), @r"
     success: true
     exit_code: 0
     ----- stdout -----
 
     ----- stderr -----
-    Installed Python 3.12.10 in [TIME]
-     + cpython-3.12.10-[PLATFORM]
+    Installed Python 3.12.11 in [TIME]
+     + cpython-3.12.11-[PLATFORM]
     "
     );
 
@@ -1997,7 +1997,7 @@ fn install_transparent_patch_upgrade_venv_module() {
     success: true
     exit_code: 0
     ----- stdout -----
-    Python 3.12.10
+    Python 3.12.11
 
     ----- stderr -----
     "
@@ -2014,14 +2014,14 @@ fn install_lower_patch_automatically() {
         .with_managed_python_dirs()
         .with_filtered_python_install_bin();
 
-    uv_snapshot!(context.filters(), context.python_install().arg("3.12.10"), @r"
+    uv_snapshot!(context.filters(), context.python_install().arg("3.12.11"), @r"
     success: true
     exit_code: 0
     ----- stdout -----
 
     ----- stderr -----
-    Installed Python 3.12.10 in [TIME]
-     + cpython-3.12.10-[PLATFORM]
+    Installed Python 3.12.11 in [TIME]
+     + cpython-3.12.11-[PLATFORM]
     "
     );
 
@@ -2032,7 +2032,7 @@ fn install_lower_patch_automatically() {
     ----- stdout -----
 
     ----- stderr -----
-    Using CPython 3.12.10
+    Using CPython 3.12.11
     Creating virtual environment at: .venv
     Activate with: source .venv/[BIN]/activate
     "
@@ -2068,7 +2068,7 @@ fn install_lower_patch_automatically() {
     success: true
     exit_code: 0
     ----- stdout -----
-    Python 3.12.10
+    Python 3.12.11
 
     ----- stderr -----
     "
