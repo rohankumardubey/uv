@@ -1134,8 +1134,7 @@ fn python_install_default() {
 #[cfg(windows)]
 fn launcher_path(path: &Path) -> PathBuf {
     let launcher = uv_trampoline_builder::Launcher::try_from_path(path)
-        .ok()
-        .unwrap_or_else(|| panic!("{} should be readable", path.display()))
+        .unwrap_or_else(|_| panic!("{} should be readable", path.display()))
         .unwrap_or_else(|| panic!("{} should be a valid launcher", path.display()));
     launcher.python_path
 }

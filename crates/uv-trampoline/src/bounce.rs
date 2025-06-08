@@ -157,13 +157,11 @@ fn is_virtualenv(exec_dir: &Path) -> bool {
 
     for dir in &[parent_dir, exec_dir] {
         let pyvenv_path = dir.join("pyvenv.cfg");
-        if pyvenv_path.exists() {
-            if let Ok(file) = File::open(&pyvenv_path) {
-                let reader = BufReader::new(file);
-                for line in reader.lines().map_while(Result::ok) {
-                    if line.trim().starts_with("home") {
-                        return true;
-                    }
+        if let Ok(file) = File::open(&pyvenv_path) {
+            let reader = BufReader::new(file);
+            for line in reader.lines().map_while(Result::ok) {
+                if line.starts_with("home") {
+                    return true;
                 }
             }
         }
