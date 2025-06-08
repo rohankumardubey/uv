@@ -606,6 +606,9 @@ impl ManagedPythonInstallation {
             if !matches!(launcher.kind, uv_trampoline_builder::LauncherKind::Python) {
                 return false;
             }
+            // We canonicalize the target path of the launcher in case it includes a minor version
+            // junction directory. If canonicalization fails, we check against the launcher path
+            // directly.
             dunce::canonicalize(&launcher.python_path).unwrap_or(launcher.python_path)
                 == self.executable(false)
         } else {
