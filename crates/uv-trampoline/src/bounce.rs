@@ -97,6 +97,7 @@ fn make_child_cmdline() -> CString {
                 let python_home_set =
                     std::env::var("PYTHONHOME").is_ok_and(|home| !home.is_empty());
                 if !is_virtualenv(python_exe.as_path()) && !python_home_set {
+                    dbg!("setting PYTHONHOME to {:?}", &python_exe.parent());
                     std::env::set_var(
                         "PYTHONHOME",
                         python_exe
@@ -145,28 +146,17 @@ fn push_quoted_path(path: &Path, command: &mut Vec<u8>) {
     command.extend(br#"""#);
 }
 
-/// Checks if the given executable path is part of a virtual environment according to the procedure
-/// described in PEP 405.
+/// Checks if the given executable is part of a virtual environment
 ///
-/// Checks if a `pyvenv.cfg` file exists in the given executable path or that of its parent.
-/// If this file exists, checks for a `home` key.
-fn is_virtualenv(exec_dir: &Path) -> bool {
-    let Some(parent_dir) = exec_dir.parent() else {
-        return false;
-    };
-
-    for dir in &[parent_dir, exec_dir] {
-        let pyvenv_path = dir.join("pyvenv.cfg");
-        if let Ok(file) = File::open(&pyvenv_path) {
-            let reader = BufReader::new(file);
-            for line in reader.lines().map_while(Result::ok) {
-                if line.starts_with("home") {
-                    return true;
-                }
-            }
-        }
-    }
-    false
+/// Checks if a `pyvenv.cfg` file exists in grandparent directory of the given executable.
+/// PEP 405 specifies a more robust procedure (checking both the parent and grandparent
+/// directory and then scanning for a `home` key), but in practice we have found this to
+/// be unnecessary.
+fn is_virtualenv(executable: &Path) -> bool {
+    executable.parent()
+        .and_then(Path::parent)
+        .map(|path| path.join("pyvenv.cfg").is_file())
+        .unwrap_or(false)
 }
 
 /// Reads the executable binary from the back to find:
