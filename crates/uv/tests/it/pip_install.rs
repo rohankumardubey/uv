@@ -11434,5 +11434,58 @@ fn overlapping_packages_warning() -> Result<()> {
     "
     );
 
+    // Check that we can uninstall even if the venv is bogus.
+    uv_snapshot!(context.filters(), context.pip_uninstall()
+        .arg("built_by_uv"), @r"
+    success: true
+    exit_code: 0
+    ----- stdout -----
+
+    ----- stderr -----
+    Uninstalled 1 package in [TIME]
+     - built-by-uv==0.1.0 (from file://[TEMP_DIR]/built_by_uv-0.1.0-py3-none-any.whl)
+    "
+    );
+    uv_snapshot!(context.filters(), context.pip_uninstall()
+        .arg("also_built_by_uv"), @r"
+    success: true
+    exit_code: 0
+    ----- stdout -----
+
+    ----- stderr -----
+    Uninstalled 1 package in [TIME]
+     - also-built-by-uv==0.1.0 (from file://[TEMP_DIR]/also_built_by_uv-0.1.0-py3-none-any.whl)
+    "
+    );
+
+    // Check that installing one of the packages on their own doesn't warn.
+    uv_snapshot!(context.filters(), context.pip_install()
+        .arg("--no-deps")
+        .arg(context.temp_dir.join("built_by_uv-0.1.0-py3-none-any.whl")), @r"
+    success: true
+    exit_code: 0
+    ----- stdout -----
+
+    ----- stderr -----
+    Resolved 1 package in [TIME]
+    Installed 1 package in [TIME]
+     + built-by-uv==0.1.0 (from file://[TEMP_DIR]/built_by_uv-0.1.0-py3-none-any.whl)
+    "
+    );
+    // Currently, we don't warn if we install them one wheel at a time.
+    uv_snapshot!(context.filters(), context.pip_install()
+        .arg("--no-deps")
+        .arg(context.temp_dir.join("also_built_by_uv-0.1.0-py3-none-any.whl")), @r"
+    success: true
+    exit_code: 0
+    ----- stdout -----
+
+    ----- stderr -----
+    Resolved 1 package in [TIME]
+    Installed 1 package in [TIME]
+     + also-built-by-uv==0.1.0 (from file://[TEMP_DIR]/also_built_by_uv-0.1.0-py3-none-any.whl)
+    "
+    );
+
     Ok(())
 }
