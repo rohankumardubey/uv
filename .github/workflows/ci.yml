@@ -1510,6 +1510,21 @@ jobs:
             --output text)
           echo "UV_TEST_AWS_TOKEN=$UV_TEST_AWS_TOKEN" >> $GITHUB_ENV
 
+      - name: Set up Google Cloud SDK
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: Generate GCP access token and set as env var
+        id: get_token
+        run: |
+          UV_TEST_GCP_TOKEN=$(gcloud auth print-access-token)
+          echo "UV_TEST_GCP_TOKEN=$UV_TEST_GCP_TOKEN" >> $GITHUB_ENV
+
       - name: "Run registry tests"
         run: ./uv run -p ${{ env.PYTHON_VERSION }} scripts/registries-test.py --uv ./uv
         env:
@@ -1525,6 +1540,8 @@ jobs:
           UV_TEST_CLOUDSMITH_TOKEN: ${{ secrets.UV_TEST_CLOUDSMITH_TOKEN }}
           UV_TEST_CLOUDSMITH_URL: ${{ secrets.UV_TEST_CLOUDSMITH_URL }}
           UV_TEST_CLOUDSMITH_USERNAME: ${{ secrets.UV_TEST_CLOUDSMITH_USERNAME }}
+          UV_TEST_GCP_URL: ${{ secrets.UV_TEST_GCP_URL }}
+          UV_TEST_GCP_USERNAME: oauth2accesstoken
           UV_TEST_GEMFURY_TOKEN: ${{ secrets.UV_TEST_GEMFURY_TOKEN }}
           UV_TEST_GEMFURY_URL: ${{ secrets.UV_TEST_GEMFURY_URL }}
           UV_TEST_GEMFURY_USERNAME: ${{ secrets.UV_TEST_GEMFURY_USERNAME }}
