@@ -1393,7 +1393,7 @@ fn sync_build_isolation_fail() -> Result<()> {
      + setuptools==69.2.0
     ");
 
-    // assert!(context.temp_dir.child("uv.lock").exists());
+    assert!(context.temp_dir.child("uv.lock").exists());
 
     Ok(())
 }
