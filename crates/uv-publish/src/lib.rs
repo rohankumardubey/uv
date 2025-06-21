@@ -12,6 +12,7 @@ use itertools::Itertools;
 use reqwest::header::AUTHORIZATION;
 use reqwest::multipart::Part;
 use reqwest::{Body, Response, StatusCode};
+use reqwest_middleware::RequestBuilder;
 use reqwest_retry::policies::ExponentialBackoff;
 use reqwest_retry::{RetryPolicy, Retryable, RetryableStrategy};
 use rustc_hash::FxHashSet;
@@ -28,7 +29,7 @@ use uv_auth::Credentials;
 use uv_cache::{Cache, Refresh};
 use uv_client::{
     BaseClient, DEFAULT_RETRIES, MetadataFormat, OwnedArchive, RegistryClientBuilder,
-    RequestBuilder, UvRetryableStrategy,
+    UvRetryableStrategy,
 };
 use uv_configuration::{KeyringProviderType, TrustedPublishing};
 use uv_distribution_filename::{DistFilename, SourceDistExtension, SourceDistFilename};
@@ -329,9 +330,7 @@ pub async fn check_trusted_publishing(
             debug!(
                 "Running on GitHub Actions without explicit credentials, checking for trusted publishing"
             );
-            match trusted_publishing::get_token(registry, client.for_host(registry).raw_client())
-                .await
-            {
+            match trusted_publishing::get_token(registry, client.for_host(registry)).await {
                 Ok(token) => Ok(TrustedPublishResult::Configured(token)),
                 Err(err) => {
                     // TODO(konsti): It would be useful if we could differentiate between actual errors
@@ -365,9 +364,7 @@ pub async fn check_trusted_publishing(
                 );
             }
 
-            let token =
-                trusted_publishing::get_token(registry, client.for_host(registry).raw_client())
-                    .await?;
+            let token = trusted_publishing::get_token(registry, client.for_host(registry)).await?;
             Ok(TrustedPublishResult::Configured(token))
         }
         TrustedPublishing::Never => Ok(TrustedPublishResult::Skipped),
@@ -761,16 +758,16 @@ impl FormMetadata {
 /// Build the upload request.
 ///
 /// Returns the request and the reporter progress bar id.
-async fn build_request<'a>(
+async fn build_request(
     file: &Path,
     raw_filename: &str,
     filename: &DistFilename,
     registry: &DisplaySafeUrl,
-    client: &'a BaseClient,
+    client: &BaseClient,
     credentials: &Credentials,
     form_metadata: &FormMetadata,
     reporter: Arc<impl Reporter>,
-) -> Result<(RequestBuilder<'a>, usize), PublishPrepareError> {
+) -> Result<(RequestBuilder, usize), PublishPrepareError> {
     let mut form = reqwest::multipart::Form::new();
     for (key, value) in form_metadata.iter() {
         form = form.text(*key, value.clone());
@@ -987,13 +984,12 @@ mod tests {
         project_urls: Source, https://github.com/unknown/tqdm
         "###);
 
-        let client = BaseClientBuilder::new().build();
         let (request, _) = build_request(
             &file,
             raw_filename,
             &filename,
             &DisplaySafeUrl::parse("https://example.org/upload").unwrap(),
-            &client,
+            &BaseClientBuilder::new().build(),
             &Credentials::basic(Some("ferris".to_string()), Some("F3RR!S".to_string())),
             &form_metadata,
             Arc::new(DummyReporter),
@@ -1004,7 +1000,7 @@ mod tests {
         insta::with_settings!({
             filters => [("boundary=[0-9a-f-]+", "boundary=[...]")],
         }, {
-            assert_debug_snapshot!(&request.raw_builder(), @r#"
+            assert_debug_snapshot!(&request, @r#"
             RequestBuilder {
                 inner: RequestBuilder {
                     method: POST,
@@ -1139,13 +1135,12 @@ mod tests {
         requires_dist: requests ; extra == 'telegram'
         "###);
 
-        let client = BaseClientBuilder::new().build();
         let (request, _) = build_request(
             &file,
             raw_filename,
             &filename,
             &DisplaySafeUrl::parse("https://example.org/upload").unwrap(),
-            &client,
+            &BaseClientBuilder::new().build(),
             &Credentials::basic(Some("ferris".to_string()), Some("F3RR!S".to_string())),
             &form_metadata,
             Arc::new(DummyReporter),
@@ -1156,7 +1151,7 @@ mod tests {
         insta::with_settings!({
             filters => [("boundary=[0-9a-f-]+", "boundary=[...]")],
         }, {
-            assert_debug_snapshot!(&request.raw_builder(), @r#"
+            assert_debug_snapshot!(&request, @r#"
             RequestBuilder {
                 inner: RequestBuilder {
                     method: POST,
