@@ -496,7 +496,7 @@ impl BaseClient {
 
     /// Executes a request, applying redirect policy.
     pub async fn execute(&self, req: Request) -> reqwest_middleware::Result<Response> {
-        let client = self.for_host(&DisplaySafeUrl::from(req.url().clone()));
+        let client = self.for_host(DisplaySafeUrl::ref_cast(req.url()));
         client.execute(req).await
     }
 
