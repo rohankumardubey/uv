@@ -195,7 +195,6 @@ pub(crate) async fn add(
                     &client_builder,
                     cache,
                     &reporter,
-                    preview,
                 )
                 .await?;
                 Pep723Script::init(&path, requires_python.specifiers()).await?
@@ -218,7 +217,6 @@ pub(crate) async fn add(
             active,
             cache,
             printer,
-            preview,
         )
         .await?
         .into_interpreter();
@@ -288,7 +286,6 @@ pub(crate) async fn add(
                 active,
                 cache,
                 printer,
-                preview,
             )
             .await?
             .into_interpreter();
@@ -310,7 +307,6 @@ pub(crate) async fn add(
                 cache,
                 DryRun::Disabled,
                 printer,
-                preview,
             )
             .await?
             .into_environment()?;

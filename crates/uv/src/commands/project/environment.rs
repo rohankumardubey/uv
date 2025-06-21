@@ -7,7 +7,7 @@ use uv_cache_key::{cache_digest, hash_digest};
 use uv_configuration::{Concurrency, Constraints, PreviewMode};
 use uv_distribution_types::{Name, Resolution};
 use uv_fs::PythonExt;
-use uv_python::{Interpreter, PythonEnvironment, canonicalize_executable};
+use uv_python::{Interpreter, PythonEnvironment};
 
 use crate::commands::pip::loggers::{InstallLogger, ResolveLogger};
 use crate::commands::pip::operations::Modifications;
@@ -74,8 +74,7 @@ impl CachedEnvironment {
 
         // Hash the interpreter based on its path.
         // TODO(charlie): Come up with a robust hash for the interpreter.
-        let interpreter_hash =
-            cache_digest(&canonicalize_executable(interpreter.sys_executable())?);
+        let interpreter_hash = cache_digest(&interpreter.sys_executable());
 
         // Search in the content-addressed cache.
         let cache_entry = cache.entry(CacheBucket::Environments, interpreter_hash, resolution_hash);
@@ -98,8 +97,6 @@ impl CachedEnvironment {
             false,
             true,
             false,
-            false,
-            preview,
         )?;
 
         sync_environment(

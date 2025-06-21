@@ -35,7 +35,6 @@ use uv_fs::{CWD, Simplified};
 use uv_pep440::release_specifiers_to_ranges;
 use uv_pep508::VersionOrUrl;
 use uv_pypi_types::{ParsedDirectoryUrl, ParsedUrl};
-use uv_python::PythonRequest;
 use uv_requirements::RequirementsSource;
 use uv_requirements_txt::RequirementsTxtRequirement;
 use uv_scripts::{Pep723Error, Pep723Item, Pep723ItemRef, Pep723Metadata, Pep723Script};
@@ -794,7 +793,6 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                 &globals.network_settings,
                 args.dry_run,
                 printer,
-                globals.preview,
             )
             .await
         }
@@ -816,7 +814,6 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                 args.paths,
                 &cache,
                 printer,
-                globals.preview,
             )
         }
         Commands::Pip(PipNamespace {
@@ -848,7 +845,6 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                 args.settings.system,
                 &cache,
                 printer,
-                globals.preview,
             )
             .await
         }
@@ -870,7 +866,6 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                 args.files,
                 &cache,
                 printer,
-                globals.preview,
             )
         }
         Commands::Pip(PipNamespace {
@@ -902,7 +897,6 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                 args.settings.system,
                 &cache,
                 printer,
-                globals.preview,
             )
             .await
         }
@@ -921,7 +915,6 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                 args.settings.system,
                 &cache,
                 printer,
-                globals.preview,
             )
         }
         Commands::Cache(CacheNamespace {
@@ -1023,13 +1016,10 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                 }
             });
 
-            let python_request: Option<PythonRequest> =
-                args.settings.python.as_deref().map(PythonRequest::parse);
-
             commands::venv(
                 &project_dir,
                 args.path,
-                python_request,
+                args.settings.python.as_deref(),
                 args.settings.install_mirrors,
                 globals.python_preference,
                 globals.python_downloads,
@@ -1380,7 +1370,6 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                 globals.python_downloads,
                 &cache,
                 printer,
-                globals.preview,
             )
             .await
         }
@@ -1390,43 +1379,12 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
             // Resolve the settings from the command-line arguments and workspace configuration.
             let args = settings::PythonInstallSettings::resolve(args, filesystem);
             show_settings!(args);
-            // TODO(john): If we later want to support `--upgrade`, we need to replace this.
-            let upgrade = false;
 
             commands::python_install(
                 &project_dir,
                 args.install_dir,
                 args.targets,
                 args.reinstall,
-                upgrade,
-                args.force,
-                args.python_install_mirror,
-                args.pypy_install_mirror,
-                args.python_downloads_json_url,
-                globals.network_settings,
-                args.default,
-                globals.python_downloads,
-                cli.top_level.no_config,
-                globals.preview,
-                printer,
-            )
-            .await
-        }
-        Commands::Python(PythonNamespace {
-            command: PythonCommand::Upgrade(args),
-        }) => {
-            // Resolve the settings from the command-line arguments and workspace configuration.
-            let args = settings::PythonUpgradeSettings::resolve(args, filesystem);
-            show_settings!(args);
-            let reinstall = false;
-            let upgrade = true;
-
-            commands::python_install(
-                &project_dir,
-                args.install_dir,
-                args.targets,
-                reinstall,
-                upgrade,
                 args.force,
                 args.python_install_mirror,
                 args.pypy_install_mirror,
@@ -1475,7 +1433,6 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                     cli.top_level.no_config,
                     &cache,
                     printer,
-                    globals.preview,
                 )
                 .await
             } else {
@@ -1489,7 +1446,6 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                     globals.python_preference,
                     &cache,
                     printer,
-                    globals.preview,
                 )
                 .await
             }
@@ -1516,7 +1472,6 @@ async fn run(mut cli: Cli) -> Result<ExitStatus> {
                 globals.network_settings,
                 &cache,
                 printer,
-                globals.preview,
             )
             .await
         }
