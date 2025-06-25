@@ -11,13 +11,9 @@ pub use crate::discovery::{
 };
 pub use crate::downloads::PlatformRequest;
 pub use crate::environment::{InvalidEnvironmentKind, PythonEnvironment};
-pub use crate::implementation::{ImplementationName, LenientImplementationName};
-pub use crate::installation::{
-    PythonInstallation, PythonInstallationKey, PythonInstallationMinorVersionKey,
-};
-pub use crate::interpreter::{
-    BrokenSymlink, Error as InterpreterError, Interpreter, canonicalize_executable,
-};
+pub use crate::implementation::ImplementationName;
+pub use crate::installation::{PythonInstallation, PythonInstallationKey};
+pub use crate::interpreter::{BrokenSymlink, Error as InterpreterError, Interpreter};
 pub use crate::pointer_size::PointerSize;
 pub use crate::prefix::Prefix;
 pub use crate::python_version::PythonVersion;
@@ -119,7 +115,6 @@ mod tests {
     use indoc::{formatdoc, indoc};
     use temp_env::with_vars;
     use test_log::test;
-    use uv_configuration::PreviewMode;
     use uv_static::EnvVars;
 
     use uv_cache::Cache;
@@ -452,7 +447,6 @@ mod tests {
                 EnvironmentPreference::OnlySystem,
                 PythonPreference::default(),
                 &context.cache,
-                PreviewMode::Disabled,
             )
         });
         assert!(
@@ -467,7 +461,6 @@ mod tests {
                 EnvironmentPreference::OnlySystem,
                 PythonPreference::default(),
                 &context.cache,
-                PreviewMode::Disabled,
             )
         });
         assert!(
@@ -492,7 +485,6 @@ mod tests {
                 EnvironmentPreference::OnlySystem,
                 PythonPreference::default(),
                 &context.cache,
-                PreviewMode::Disabled,
             )
         });
         assert!(
@@ -514,7 +506,6 @@ mod tests {
                 EnvironmentPreference::OnlySystem,
                 PythonPreference::default(),
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert!(
@@ -576,7 +567,6 @@ mod tests {
                 EnvironmentPreference::OnlySystem,
                 PythonPreference::default(),
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert!(
@@ -608,7 +598,6 @@ mod tests {
                 EnvironmentPreference::OnlySystem,
                 PythonPreference::default(),
                 &context.cache,
-                PreviewMode::Disabled,
             )
         });
         assert!(
@@ -645,7 +634,6 @@ mod tests {
                 EnvironmentPreference::OnlySystem,
                 PythonPreference::default(),
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert!(
@@ -677,7 +665,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -699,7 +686,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -725,7 +711,6 @@ mod tests {
                 EnvironmentPreference::OnlySystem,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -751,7 +736,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -774,7 +758,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
 
@@ -808,7 +791,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
 
@@ -842,7 +824,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })?;
         assert!(
@@ -864,7 +845,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })?;
         assert!(
@@ -886,7 +866,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
 
@@ -920,7 +899,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
 
@@ -957,7 +935,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })??;
         assert!(
@@ -988,7 +965,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })??;
         assert!(
@@ -1023,7 +999,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })??;
         assert_eq!(
@@ -1049,7 +1024,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })??;
         assert_eq!(
@@ -1076,7 +1050,6 @@ mod tests {
                     EnvironmentPreference::OnlyVirtual,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1101,7 +1074,6 @@ mod tests {
                     EnvironmentPreference::OnlyVirtual,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )?;
@@ -1123,7 +1095,6 @@ mod tests {
                     EnvironmentPreference::OnlySystem,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1146,7 +1117,6 @@ mod tests {
                     EnvironmentPreference::OnlyVirtual,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1179,7 +1149,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1200,7 +1169,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1227,7 +1195,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
 
@@ -1245,7 +1212,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
 
@@ -1274,7 +1240,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })??;
         assert_eq!(
@@ -1312,7 +1277,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1340,7 +1304,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1365,7 +1328,6 @@ mod tests {
                     EnvironmentPreference::ExplicitSystem,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1390,7 +1352,6 @@ mod tests {
                     EnvironmentPreference::OnlySystem,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1415,7 +1376,6 @@ mod tests {
                     EnvironmentPreference::OnlyVirtual,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1453,7 +1413,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1481,7 +1440,6 @@ mod tests {
                     EnvironmentPreference::OnlySystem,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })??;
         assert_eq!(
@@ -1498,7 +1456,6 @@ mod tests {
                     EnvironmentPreference::OnlySystem,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })??;
         assert_eq!(
@@ -1515,7 +1472,6 @@ mod tests {
                     EnvironmentPreference::OnlySystem,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })?;
         assert!(
@@ -1537,7 +1493,6 @@ mod tests {
                 EnvironmentPreference::OnlyVirtual,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })?;
         assert!(
@@ -1554,7 +1509,6 @@ mod tests {
                     EnvironmentPreference::OnlySystem,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )?;
@@ -1576,7 +1530,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1591,7 +1544,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })?;
         assert!(
@@ -1605,7 +1557,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })?;
         assert!(
@@ -1634,7 +1585,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1650,7 +1600,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1680,7 +1629,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1696,7 +1644,6 @@ mod tests {
                 EnvironmentPreference::ExplicitSystem,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1712,7 +1659,6 @@ mod tests {
                 EnvironmentPreference::OnlyVirtual,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1728,7 +1674,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1752,7 +1697,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1767,7 +1711,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1791,7 +1734,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1811,7 +1753,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             },
         )??;
@@ -1840,7 +1781,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1862,7 +1802,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })?;
         assert!(
@@ -1892,7 +1831,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1908,7 +1846,6 @@ mod tests {
                 EnvironmentPreference::ExplicitSystem,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })?;
         assert!(
@@ -1935,7 +1872,6 @@ mod tests {
                     EnvironmentPreference::ExplicitSystem,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })
             .unwrap()
@@ -1960,7 +1896,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })?;
         assert!(
@@ -1977,7 +1912,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -1992,7 +1926,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2018,7 +1951,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2033,7 +1965,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2059,7 +1990,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2086,7 +2016,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2113,7 +2042,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2140,7 +2068,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2167,7 +2094,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2195,7 +2121,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })?;
         assert!(
@@ -2217,7 +2142,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2232,7 +2156,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2258,7 +2181,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2273,7 +2195,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
         assert_eq!(
@@ -2311,7 +2232,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })
             .unwrap()
@@ -2329,7 +2249,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })
             .unwrap()
@@ -2371,7 +2290,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })
             .unwrap()
@@ -2389,7 +2307,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })
             .unwrap()
@@ -2426,7 +2343,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })
             .unwrap()
@@ -2449,7 +2365,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })
             .unwrap()
@@ -2472,7 +2387,6 @@ mod tests {
                     EnvironmentPreference::Any,
                     PythonPreference::OnlySystem,
                     &context.cache,
-                    PreviewMode::Disabled,
                 )
             })
             .unwrap()
@@ -2511,7 +2425,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
 
@@ -2564,7 +2477,6 @@ mod tests {
                 EnvironmentPreference::Any,
                 PythonPreference::OnlySystem,
                 &context.cache,
-                PreviewMode::Disabled,
             )
         })??;
 

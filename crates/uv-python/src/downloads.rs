@@ -111,14 +111,14 @@ pub enum Error {
     },
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct ManagedPythonDownload {
     key: PythonInstallationKey,
     url: &'static str,
     sha256: Option<&'static str>,
 }
 
-#[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Default, Eq, PartialEq)]
 pub struct PythonDownloadRequest {
     pub(crate) version: Option<VersionRequest>,
     pub(crate) implementation: Option<ImplementationName>,
@@ -131,7 +131,7 @@ pub struct PythonDownloadRequest {
     pub(crate) prereleases: Option<bool>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ArchRequest {
     Explicit(Arch),
     Environment(Arch),

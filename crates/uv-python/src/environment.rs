@@ -7,7 +7,6 @@ use owo_colors::OwoColorize;
 use tracing::debug;
 
 use uv_cache::Cache;
-use uv_configuration::PreviewMode;
 use uv_fs::{LockedFile, Simplified};
 use uv_pep440::Version;
 
@@ -153,7 +152,6 @@ impl PythonEnvironment {
         request: &PythonRequest,
         preference: EnvironmentPreference,
         cache: &Cache,
-        preview: PreviewMode,
     ) -> Result<Self, Error> {
         let installation = match find_python_installation(
             request,
@@ -161,7 +159,6 @@ impl PythonEnvironment {
             // Ignore managed installations when looking for environments
             PythonPreference::OnlySystem,
             cache,
-            preview,
         )? {
             Ok(installation) => installation,
             Err(err) => return Err(EnvironmentNotFound::from(err).into()),

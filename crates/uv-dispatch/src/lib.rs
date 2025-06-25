@@ -433,7 +433,6 @@ impl BuildContext for BuildDispatch<'_> {
             self.build_extra_env_vars.clone(),
             build_output,
             self.concurrency.builds,
-            self.preview,
         )
         .boxed_local()
         .await?;

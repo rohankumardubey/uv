@@ -145,7 +145,6 @@ pub(crate) async fn sync(
                 cache,
                 dry_run,
                 printer,
-                preview,
             )
             .await?,
         ),
@@ -163,7 +162,6 @@ pub(crate) async fn sync(
                 cache,
                 dry_run,
                 printer,
-                preview,
             )
             .await?,
         ),

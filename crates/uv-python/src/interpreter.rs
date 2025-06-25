@@ -26,7 +26,6 @@ use uv_platform_tags::{Tags, TagsError};
 use uv_pypi_types::{ResolverMarkerEnvironment, Scheme};
 
 use crate::implementation::LenientImplementationName;
-use crate::managed::ManagedPythonInstallations;
 use crate::platform::{Arch, Libc, Os};
 use crate::pointer_size::PointerSize;
 use crate::{
@@ -169,7 +168,7 @@ impl Interpreter {
             Ok(path) => path,
             Err(err) => {
                 warn!("Failed to find base Python executable: {err}");
-                canonicalize_executable(base_executable)?
+                uv_fs::canonicalize_executable(base_executable)?
             }
         };
         Ok(base_python)
@@ -262,21 +261,6 @@ impl Interpreter {
     /// Returns `true` if the environment is a `--prefix` environment.
     pub fn is_prefix(&self) -> bool {
         self.prefix.is_some()
-    }
-
-    /// Returns `true` if this interpreter is managed by uv.
-    ///
-    /// Returns `false` if we cannot determine the path of the uv managed Python interpreters.
-    pub fn is_managed(&self) -> bool {
-        let Ok(installations) = ManagedPythonInstallations::from_settings(None) else {
-            return false;
-        };
-
-        installations
-            .find_all()
-            .into_iter()
-            .flatten()
-            .any(|install| install.path() == self.sys_base_prefix)
     }
 
     /// Returns `Some` if the environment is externally managed, optionally including an error
@@ -499,17 +483,8 @@ impl Interpreter {
     /// `python-build-standalone`.
     ///
     /// See: <https://github.com/astral-sh/python-build-standalone/issues/382>
-    #[cfg(unix)]
     pub fn is_standalone(&self) -> bool {
         self.standalone
-    }
-
-    /// Returns `true` if an [`Interpreter`] may be a `python-build-standalone` interpreter.
-    // TODO(john): Replace this approach with patching sysconfig on Windows to
-    // set `PYTHON_BUILD_STANDALONE=1`.`
-    #[cfg(windows)]
-    pub fn is_standalone(&self) -> bool {
-        self.standalone || (self.is_managed() && self.markers().implementation_name() == "cpython")
     }
 
     /// Return the [`Layout`] environment used to install wheels into this interpreter.
@@ -631,29 +606,6 @@ impl Interpreter {
             .await
         }
     }
-}
-
-/// Calls `fs_err::canonicalize` on Unix. On Windows, avoids attempting to resolve symlinks
-/// but will resolve junctions if they are part of a trampoline target.
-pub fn canonicalize_executable(path: impl AsRef<Path>) -> std::io::Result<PathBuf> {
-    let path = path.as_ref();
-    debug_assert!(
-        path.is_absolute(),
-        "path must be absolute: {}",
-        path.display()
-    );
-
-    #[cfg(windows)]
-    {
-        if let Ok(Some(launcher)) = uv_trampoline_builder::Launcher::try_from_path(path) {
-            Ok(dunce::canonicalize(launcher.python_path)?)
-        } else {
-            Ok(path.to_path_buf())
-        }
-    }
-
-    #[cfg(unix)]
-    fs_err::canonicalize(path)
 }
 
 /// The `EXTERNALLY-MANAGED` file in a Python installation.
@@ -983,7 +935,7 @@ impl InterpreterInfo {
 
         // We check the timestamp of the canonicalized executable to check if an underlying
         // interpreter has been modified.
-        let modified = canonicalize_executable(&absolute)
+        let modified = uv_fs::canonicalize_executable(&absolute)
             .and_then(Timestamp::from_path)
             .map_err(|err| {
                 if err.kind() == io::ErrorKind::NotFound {

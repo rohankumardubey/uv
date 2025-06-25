@@ -7,7 +7,6 @@ use owo_colors::OwoColorize;
 use rustc_hash::FxHashMap;
 
 use uv_cache::Cache;
-use uv_configuration::PreviewMode;
 use uv_distribution_types::{Diagnostic, Name};
 use uv_fs::Simplified;
 use uv_install_wheel::read_record_file;
@@ -28,7 +27,6 @@ pub(crate) fn pip_show(
     files: bool,
     cache: &Cache,
     printer: Printer,
-    preview: PreviewMode,
 ) -> Result<ExitStatus> {
     if packages.is_empty() {
         #[allow(clippy::print_stderr)]
@@ -48,7 +46,6 @@ pub(crate) fn pip_show(
         &python.map(PythonRequest::parse).unwrap_or_default(),
         EnvironmentPreference::from_system_flag(system, false),
         cache,
-        preview,
     )?;
 
     report_target_environment(&environment, cache, printer)?;
