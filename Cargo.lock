@@ -4590,6 +4590,7 @@ dependencies = [
  "futures",
  "http",
  "ignore",
+ "indexmap",
  "indicatif",
  "indoc",
  "insta",

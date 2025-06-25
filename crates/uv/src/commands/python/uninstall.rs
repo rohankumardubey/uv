@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use anyhow::Result;
 use futures::StreamExt;
 use futures::stream::FuturesUnordered;
+use indexmap::IndexSet;
 use itertools::Itertools;
 use owo_colors::OwoColorize;
 use rustc_hash::{FxHashMap, FxHashSet};
