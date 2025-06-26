@@ -97,6 +97,7 @@ impl CachedEnvironment {
             false,
             false,
             true,
+            true,
             false,
             false,
             preview,
