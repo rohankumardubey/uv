@@ -5082,7 +5082,6 @@ name = "uv-distribution"
 version = "0.0.1"
 dependencies = [
  "anyhow",
- "dashmap",
  "either",
  "fs-err 3.1.1",
  "futures",
